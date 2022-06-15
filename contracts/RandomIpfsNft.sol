@@ -3,8 +3,10 @@ pragma solidity ^0.8.7;
 
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract RandomIpfsNft is VRFConsumerBaseV2 {
+contract RandomIpfsNft is VRFConsumerBaseV2, ERC721 {
     // when we mint nft, trigger chainlink vrf to get us a random number
     // using that number, get a random nft
     // pug, shib, st benard
@@ -22,13 +24,19 @@ contract RandomIpfsNft is VRFConsumerBaseV2 {
     uint16 private constant REQUEST_CONFIRMATIONS = 3;
     uint32 private constant NUM_WORDS = 1;
 
+    // VRF helpers
+    mapping(uint256 => address) public s_requestIdToSender;
+
+    // NFT Variables
+    uint256 public s_tokenCounter;
+
     constructor(
         address vrfCoordinatorV2,
         uint64 subscriptionId,
         bytes32 gasLane, // keyHash
         uint256 mintFee,
         uint32 callbackGasLimit
-    ) VRFConsumerBaseV2(vrfCoordinatorV2) {
+    ) VRFConsumerBaseV2(vrfCoordinatorV2) ERC721("Random IPFS NFT", "RIN") {
         i_vrfCoordinator = VRFCoordinatorV2Interface(vrfCoordinatorV2);
         i_gasLane = gasLane;
         i_subscriptionId = subscriptionId;
@@ -43,12 +51,21 @@ contract RandomIpfsNft is VRFConsumerBaseV2 {
             i_callbackGasLimit,
             NUM_WORDS
         );
+        // will lose address if we dont store it
+        s_requestIdToSender[requestId] = msg.sender;
     }
 
     function fullfillRandomWords(
         uint256 requestId,
         uint256[] memory randomWords
-    ) internal {}
+    ) internal {
+        // safemint(msg.sender, s_tokencounter) !!! this would be the chainlink keeper responding
+        // need to map request id and address of who called it, so when fullrandomwords, we have same requestid. use for
+        // map to get address
+        address dogOwner = s_requestIdToSender[requestId];
+        uint256 newTokenId = s_tokenCounter;
+        _safeMint(dogOwner, newTokenId);
+    }
 
-    function tokenURI(uint256) public {}
+    function tokenURI(uint256) public view override returns (string memory) {}
 }
