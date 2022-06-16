@@ -17,6 +17,12 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721 {
     // users have to pay to mint nft
     // owner of contract can withdraw eth
 
+    enum Breed {
+        PUG,
+        SHIB_INU,
+        ST_BERNARD
+    }
+
     VRFCoordinatorV2Interface private immutable i_vrfCoordinator;
     uint64 private immutable i_subscriptionId;
     bytes32 private immutable i_gasLane;
@@ -29,6 +35,7 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721 {
 
     // NFT Variables
     uint256 public s_tokenCounter;
+    uint256 internal constant MAX_CHANCE_VALUE = 100;
 
     constructor(
         address vrfCoordinatorV2,
@@ -55,16 +62,46 @@ contract RandomIpfsNft is VRFConsumerBaseV2, ERC721 {
         s_requestIdToSender[requestId] = msg.sender;
     }
 
-    function fullfillRandomWords(
-        uint256 requestId,
-        uint256[] memory randomWords
-    ) internal {
+    function fulfillRandomWords(uint256 requestId, uint256[] memory randomWords)
+        internal
+        override
+    {
         // safemint(msg.sender, s_tokencounter) !!! this would be the chainlink keeper responding
         // need to map request id and address of who called it, so when fullrandomwords, we have same requestid. use for
         // map to get address
         address dogOwner = s_requestIdToSender[requestId];
         uint256 newTokenId = s_tokenCounter;
         _safeMint(dogOwner, newTokenId);
+        uint256 moddedRng = randomWords[0] % MAX_CHANCE_VALUE; // 0-99
+
+        Breed dogBreed = getBreedFromModdedRng(moddedRng);
+    }
+
+    function getBreedFromModdedRng(uint256 moddedRng)
+        public
+        pure
+        returns (Breed)
+    {
+        uint256 cumulativeSum = 0;
+        uint256[3] memory chanceArray = getChanceArray();
+        // moddedRng = 25
+        // i = 0
+        // sum = 0
+        for (uint256 i = 0; i < chanceArray.length; i++) {
+            if (
+                moddedRng >= cumulativeSum &&
+                moddedRng < cumulativeSum + chanceArray[i]
+            ) {
+                return Breed(i);
+            }
+            cumulativeSum += chanceArray[i];
+        }
+    }
+
+    function getChanceArray() public pure returns (uint256[3] memory) {
+        // 10% chance of happening, 20% (30-10), 60% (100 - 10 - 30)
+        // 0-10, 10-30, 30-100
+        return [10, 30, MAX_CHANCE_VALUE];
     }
 
     function tokenURI(uint256) public view override returns (string memory) {}
