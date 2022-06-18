@@ -13,6 +13,7 @@ const networkConfig = {
     keepersUpdateInterval: "30",
     raffleEntranceFee: ethers.utils.parseEther("0.01"), // 0.1 ETH
     callbackGasLimit: "500000", // 500,000 gas
+    mintFee: "10000000000000000", // 0.1
   },
   4: {
     name: "rinkeby",
@@ -23,6 +24,7 @@ const networkConfig = {
     raffleEntranceFee: ethers.utils.parseEther("0.01"), // 0.1 ETH
     callbackGasLimit: "500000", // 500,000 gas
     vrfCoordinatorV2: "0x6168499c0cFfCaCD319c818142124B7A15E857ab",
+    mintFee: "10000000000000000", // 0.1
   },
   1: {
     name: "mainnet",

@@ -10,6 +10,7 @@ const {
 } = require("../utils/uploadToPinata");
 
 const FUND_AMOUNT = "1000000000000000000000";
+// const FUND_AMOUNT = ethers.utils.parseEther("30");
 const imagesLocation = "./images/randomNft/";
 let tokenUris = [
   "ipfs://QmaVkBn2tKmjbhphU7eyztbvSQU5EXDdqRyXZtRhSGgJGo",
@@ -44,7 +45,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     tokenUris = await handleTokenUris();
   }
 
-  if (chainId == 31337) {
+  if (developmentChains.includes(network.name)) {
     // create VRFV2 Subscription
     const vrfCoordinatorV2Mock = await ethers.getContract(
       "VRFCoordinatorV2Mock"
