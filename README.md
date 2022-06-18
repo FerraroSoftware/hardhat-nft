@@ -6,6 +6,8 @@
 
 ## Current Issues
 
+### 1.
+
 ~~BigNumber Issue~~
 
 ```
@@ -16,5 +18,5 @@ Currenty fails with:
 Error: ERROR processing hardhat-nft/deploy/02-deploy-random-ipfs-nft.js:
 Error: invalid BigNumber value (argument="value", value=undefined, code=INVALID_ARGUMENT, version=bignumber/5.6.2)
 
-Resolution:
+**Resolution:**
 Missing mintFee in `helper-hardhat-config.js`
