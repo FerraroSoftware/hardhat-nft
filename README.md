@@ -2,7 +2,17 @@
 
 1. Basic NFT
 2. Random IPFS NFT - random at creation time
+
+- Pros: Cheap
+- Cons: Someone needs to pin our data
+
 3. Dynamic SVG NFT
+
+- Pros: Data is on chain
+- Cons: Expensive!
+
+If price of ETH is above X -> Happy Face
+Else below -> Frowny Face
 
 ## Current Issues
 
