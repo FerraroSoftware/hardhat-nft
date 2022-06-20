@@ -30,3 +30,11 @@ Error: invalid BigNumber value (argument="value", value=undefined, code=INVALID_
 
 **Resolution:**
 Missing mintFee in `helper-hardhat-config.js`
+
+### 2.
+
+Dynamic NFT test failing
+
+```
+  Error: call revert exception; VM Exception while processing transaction: reverted with reason string "URI Query for nonexistent token.
+```
