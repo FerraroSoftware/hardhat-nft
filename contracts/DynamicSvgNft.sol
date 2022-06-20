@@ -33,10 +33,17 @@ contract DynamicSvgNft is ERC721 {
 
     function mintNft(int256 highValue) public {
         // when they mint they choose the value they want
+        // TODO: Not sure if this is correct ordering ... fails deploy when the way i think
+        /* 
         s_tokenIdToHighValue[s_tokenCounter] = highValue;
         s_tokenCounter = s_tokenCounter + 1;
         _safeMint(msg.sender, s_tokenCounter);
         emit CreatedNFT(s_tokenCounter, highValue);
+        */
+        s_tokenIdToHighValue[s_tokenCounter] = highValue;
+        emit CreatedNFT(s_tokenCounter, highValue);
+        _safeMint(msg.sender, s_tokenCounter);
+        s_tokenCounter = s_tokenCounter + 1;
     }
 
     // we can encode svgs to base64
